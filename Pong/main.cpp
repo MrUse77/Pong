@@ -66,7 +66,11 @@ int main(void){
 	const int screenWidth = 800;
 	const int screenHeight = 450;
 	InitWindow(screenWidth, screenHeight, "Pong");
-	
+	InitAudioDevice();
+
+	Sound hitPlayer = LoadSound("assets/hitPlayer.wav");
+	Sound hitWall = LoadSound("assets/hitWall.wav");
+	Sound hitGoal = LoadSound("assets/hitGoal.wav");
 	Player player1 = Player({ 20, 200 }, 0,5);
 	Player player2 = Player({ 760, 200 }, 0,5);
 	Ball ball = Ball({0,0}, {400, 225});
@@ -126,11 +130,13 @@ int main(void){
 
 		if (ball.getPosition().x <= 0) {
 			player2.setScore(player2.getScore() + 1);
+			PlaySound(hitGoal);
 			ball.setPosition({ 400, 225 });
 			ball.setSpeed({ 5, 0 });
 		}
 		if (ball.getPosition().x >= 800) {
 			player1.setScore(player1.getScore() + 1);
+			PlaySound(hitGoal);
 			ball.setPosition({ 400, 225 });
 			ball.setSpeed({ -5, 0 });
 		}
@@ -138,6 +144,7 @@ int main(void){
 		//fisicas
 		if (ball.getPosition().y <= 0 || ball.getPosition().y >= 450) {
 			ball.setSpeed({ ball.getSpeed().x, -ball.getSpeed().y });
+			PlaySound(hitWall);
 		}
 		if (CheckCollisionCircleRec(ball.getPosition(), 10, { player1.getPosition().x, player1.getPosition().y, 20, 100 })) {
 			if (player1.getPosition().y + 50 > ball.getPosition().y) {
@@ -146,6 +153,7 @@ int main(void){
 			else {
 				ball.setSpeed({ -ball.getSpeed().x, 3 });
 			}
+			PlaySound(hitPlayer);
 		}
 		if (CheckCollisionCircleRec(ball.getPosition(), 10, { player2.getPosition().x, player2.getPosition().y, 20, 100 })) {
 			if (player2.getPosition().y + 50 > ball.getPosition().y) {
@@ -154,6 +162,7 @@ int main(void){
 			else {
 				ball.setSpeed({ -ball.getSpeed().x, 3 });
 			}
+			PlaySound(hitPlayer);
 		}
 		//limites para jugadores
 		if (player1.getPosition().y <= 0) {
